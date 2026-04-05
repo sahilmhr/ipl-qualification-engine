@@ -805,31 +805,30 @@ export default function App() {
   }
 
   function importData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
+    const reader = new FileReader();
 
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
 
-      // basic sanity check
-      if (!Array.isArray(data)) {
-        throw new Error("Invalid format");
+        // basic sanity check
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid format");
+        }
+
+        localStorage.setItem("fixtures", JSON.stringify(data));
+        setFixtures(data);
+      } catch (err) {
+        alert("Invalid file");
+        console.error(err);
       }
+    };
 
-      localStorage.setItem("fixtures", JSON.stringify(data));
-      setFixtures(data);
-
-    } catch (err) {
-      alert("Invalid file");
-      console.error(err);
-    }
-  };
-
-  reader.readAsText(file);
-}
+    reader.readAsText(file);
+  }
 
   return (
     <div
@@ -840,11 +839,6 @@ export default function App() {
         paddingBottom: "3rem",
       }}
     >
-
-<button onClick={exportData}>Export Data</button>
-
-<input type="file" accept="application/json" onChange={importData} />
-
       {/* Modal */}
       {modalMatch && (
         <MatchModal
@@ -1179,6 +1173,61 @@ export default function App() {
               Sorted by Points, then NRR as tiebreaker · NR = No Result (1 pt
               each) · NRR updates automatically as you enter scores in Fixtures
             </div>
+          </div>
+        )}
+
+        {tab === "Standings" && (
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+              padding: "1rem 0",
+              alignItems: "center",
+            }}
+          >
+            <button
+              onClick={exportData}
+              style={{
+                padding: "10px 20px",
+                borderRadius: 8,
+                border: "none",
+                background: "#EA580C",
+                color: "#fff",
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "background 0.2s",
+              }}
+              onMouseEnter={(e) => (e.target.style.background = "#D4550A")}
+              onMouseLeave={(e) => (e.target.style.background = "#EA580C")}
+            >
+              Export Data
+            </button>
+            <label
+              style={{
+                padding: "10px 20px",
+                borderRadius: 8,
+                border: "0.5px solid var(--color-border-secondary)",
+                background: "var(--color-background-primary)",
+                color: "var(--color-text-primary)",
+                fontSize: 13,
+                cursor: "pointer",
+                transition: "border-color 0.2s",
+                display: "inline-block",
+              }}
+              onMouseEnter={(e) => (e.target.style.borderColor = "#EA580C")}
+              onMouseLeave={(e) =>
+                (e.target.style.borderColor = "var(--color-border-secondary)")
+              }
+            >
+              Import Data
+              <input
+                type="file"
+                accept="application/json"
+                onChange={importData}
+                style={{ display: "none" }}
+              />
+            </label>
           </div>
         )}
 
