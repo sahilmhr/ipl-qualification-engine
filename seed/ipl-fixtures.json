@@ -427,7 +427,20 @@
     "a": "KKR",
     "b": "LSG",
     "date": "9 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "LSG",
+      "scoreA": {
+        "runs": "181",
+        "wickets": "4",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "182",
+        "wickets": "7",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
