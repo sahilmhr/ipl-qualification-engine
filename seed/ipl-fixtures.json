@@ -458,7 +458,20 @@
     "a": "RR",
     "b": "RCB",
     "date": "10 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "RR",
+      "scoreA": {
+        "runs": "202",
+        "wickets": "4",
+        "overs": "18"
+      },
+      "scoreB": {
+        "runs": "201",
+        "wickets": "8",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
