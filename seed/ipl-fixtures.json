@@ -520,7 +520,20 @@
     "a": "CSK",
     "b": "DC",
     "date": "11 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "CSK",
+      "scoreA": {
+        "runs": "212",
+        "wickets": "2",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "189",
+        "wickets": "10",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",

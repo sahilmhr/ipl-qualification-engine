@@ -299,10 +299,9 @@ function canFourTeamsExceed(teamId, threshold, fixtures, standings) {
     (f) => !f.result && f.a !== teamId && f.b !== teamId,
   );
   const M = remMatches.length;
-  const needs = {},
-    maxPoss = {};
+  const needs = {}, maxPoss = {};
   others.forEach((tid) => {
-    const w = standings[tid]?.wins || 0;
+    const w = standings[tid]?.wins || 0; 
     needs[tid] = Math.max(0, threshold - w);
     const tr = fixtures.filter(
       (f) => !f.result && (f.a === tid || f.b === tid),
