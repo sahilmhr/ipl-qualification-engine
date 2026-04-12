@@ -745,6 +745,51 @@ function QualRace({ standings, fixtures, allQual }) {
 }
 
 // ─── STREAK BADGE ─────────────────────────────────────────────────────────────
+function LastResultsBadge({ results }) {
+  if (!results || results.length === 0)
+    return (
+      <span style={{ fontSize: 10, color: "var(--color-text-tertiary)", justifyContent: "center" }}>
+        —
+      </span>
+    );
+  // Get last 4 results
+  const last4 = results.slice(-4);
+  return (
+    <span
+      style={{
+        fontSize: 9,
+        fontWeight: 600,
+        letterSpacing: "1px",
+        whiteSpace: "nowrap",
+        display: "flex",
+        gap: "3px",
+        justifyContent: "center"
+      }}
+    >
+      {last4.map((result, idx) => {
+        const color =
+          result === "W"
+            ? "#22c55e"
+            : result === "L"
+              ? "#ef4444"
+              : "#94a3b8";
+        return (
+          <span
+            key={idx}
+            style={{
+              color: color,
+              fontWeight: 700,
+            }}
+          >
+            {result}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+// ─── STREAK BADGE FOR CURRENT STREAK ──────────────────────────────────────────
 function StreakBadge({ streak }) {
   if (!streak || streak.count === 0)
     return (
@@ -1514,11 +1559,11 @@ export default function App() {
                     {[
                       "#",
                       "Team",
-                      "Pts",
                       "P",
                       "W",
                       "L",
                       "NR",
+                      "Pts",
                       "NRR",
                       "Max W",
                       "Streak",
@@ -1653,17 +1698,6 @@ export default function App() {
                           style={{
                             padding: "9px 7px",
                             textAlign: "center",
-                            fontWeight: 700,
-                            color: Y,
-                            fontSize: 14,
-                          }}
-                        >
-                          {s.points}
-                        </td>
-                        <td
-                          style={{
-                            padding: "9px 7px",
-                            textAlign: "center",
                             color: "var(--color-text-secondary)",
                           }}
                         >
@@ -1701,6 +1735,17 @@ export default function App() {
                           style={{
                             padding: "9px 7px",
                             textAlign: "center",
+                            fontWeight: 700,
+                            color: Y,
+                            fontSize: 14,
+                          }}
+                        >
+                          {s.points}
+                        </td>
+                        <td
+                          style={{
+                            padding: "9px 7px",
+                            textAlign: "center",
                             fontWeight: 500,
                             color:
                               s.nrr > 0
@@ -1724,7 +1769,7 @@ export default function App() {
                           {maxW}
                         </td>
                         <td style={{ padding: "9px 7px", textAlign: "center" }}>
-                          <StreakBadge streak={s.currentStreak} />
+                          <LastResultsBadge results={s.streak}/>
                         </td>
                         <td style={{ padding: "9px 7px", textAlign: "center" }}>
                           {magicEl}

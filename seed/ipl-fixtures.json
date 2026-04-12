@@ -551,7 +551,20 @@
     "a": "LSG",
     "b": "GT",
     "date": "12 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "GT",
+      "scoreA": {
+        "runs": "164",
+        "wickets": "8",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "165",
+        "wickets": "3",
+        "overs": "18.4"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
@@ -569,7 +582,20 @@
     "a": "MI",
     "b": "RCB",
     "date": "12 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "RCB",
+      "scoreA": {
+        "runs": "222",
+        "wickets": "5",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "240",
+        "wickets": "4",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
