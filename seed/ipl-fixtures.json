@@ -613,7 +613,20 @@
     "a": "SRH",
     "b": "RR",
     "date": "13 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "SRH",
+      "scoreA": {
+        "runs": "216",
+        "wickets": "6",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "159",
+        "wickets": "10",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
@@ -898,8 +911,8 @@
   },
   {
     "id": 37,
-    "a": "GT",
-    "b": "CSK",
+    "a": "CSK",
+    "b": "GT",
     "date": "26 Apr",
     "result": null,
     "scoreA": {
@@ -1420,8 +1433,8 @@
   },
   {
     "id": 66,
-    "a": "CSK",
-    "b": "GT",
+    "a": "GT",
+    "b": "CSK",
     "date": "21 May",
     "result": null,
     "scoreA": {
