@@ -55,7 +55,7 @@ const RAW = [
   [34, "RCB", "GT", "24 Apr"],
   [35, "DC", "PBKS", "25 Apr"],
   [36, "RR", "SRH", "25 Apr"],
-  [37, "GT", "CSK", "26 Apr"],
+  [37, "CSK", "GT", "26 Apr"],
   [38, "LSG", "KKR", "26 Apr"],
   [39, "DC", "RCB", "27 Apr"],
   [40, "PBKS", "RR", "28 Apr"],
@@ -84,7 +84,7 @@ const RAW = [
   [63, "CSK", "SRH", "18 May"],
   [64, "RR", "LSG", "19 May"],
   [65, "KKR", "MI", "20 May"],
-  [66, "CSK", "GT", "21 May"],
+  [66, "GT", "CSK", "21 May"],
   [67, "SRH", "RCB", "22 May"],
   [68, "LSG", "PBKS", "23 May"],
   [69, "MI", "RR", "24 May"],
@@ -299,9 +299,10 @@ function canFourTeamsExceed(teamId, threshold, fixtures, standings) {
     (f) => !f.result && f.a !== teamId && f.b !== teamId,
   );
   const M = remMatches.length;
-  const needs = {}, maxPoss = {};
+  const needs = {},
+    maxPoss = {};
   others.forEach((tid) => {
-    const w = standings[tid]?.wins || 0; 
+    const w = standings[tid]?.wins || 0;
     needs[tid] = Math.max(0, threshold - w);
     const tr = fixtures.filter(
       (f) => !f.result && (f.a === tid || f.b === tid),
@@ -748,7 +749,13 @@ function QualRace({ standings, fixtures, allQual }) {
 function LastResultsBadge({ results }) {
   if (!results || results.length === 0)
     return (
-      <span style={{ fontSize: 10, color: "var(--color-text-tertiary)", justifyContent: "center" }}>
+      <span
+        style={{
+          fontSize: 10,
+          color: "var(--color-text-tertiary)",
+          justifyContent: "center",
+        }}
+      >
         —
       </span>
     );
@@ -763,16 +770,12 @@ function LastResultsBadge({ results }) {
         whiteSpace: "nowrap",
         display: "flex",
         gap: "3px",
-        justifyContent: "center"
+        justifyContent: "center",
       }}
     >
       {last4.map((result, idx) => {
         const color =
-          result === "W"
-            ? "#22c55e"
-            : result === "L"
-              ? "#ef4444"
-              : "#94a3b8";
+          result === "W" ? "#22c55e" : result === "L" ? "#ef4444" : "#94a3b8";
         return (
           <span
             key={idx}
@@ -1130,7 +1133,15 @@ function MatchModal({ match, onSave, onClose }) {
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
-const TABS = ["Standings", "Fixtures", "Qualify", "Race", "Simulator", "H2H"];
+const TABS = [
+  "Standings",
+  "Fixtures",
+  "Qualify",
+  "Race",
+  "Simulator",
+  "H2H",
+  "Timelapse",
+];
 
 export default function App() {
   const [fixtures, setFixtures] = useState(loadFixtures);
@@ -1329,6 +1340,124 @@ export default function App() {
     };
     reader.readAsText(file);
   };
+
+  const playedIds = fixtures
+    .filter((f) => f.result)
+    .map((f) => f.id)
+    .sort((a, b) => a - b);
+  const maxPlayed = playedIds.length > 0 ? playedIds[playedIds.length - 1] : 0;
+  const [tlMatch, setTlMatch] = useState(maxPlayed);
+
+  const tlStandings = useMemo(() => {
+    const s = {};
+    TEAMS.forEach((t) => {
+      s[t.id] = {
+        wins: 0,
+        losses: 0,
+        nrs: 0,
+        played: 0,
+        points: 0,
+        runsFor: 0,
+        oversFor: 0,
+        runsAgainst: 0,
+        oversAgainst: 0,
+        streak: [],
+      };
+    });
+    [...fixtures]
+      .filter((f) => f.id <= tlMatch && f.result)
+      .sort((a, b) => a.id - b.id)
+      .forEach((f) => {
+        const r = f.result;
+        if (r.type === "nr") {
+          s[f.a].nrs++;
+          s[f.a].played++;
+          s[f.a].points++;
+          s[f.a].streak.push("NR");
+          s[f.b].nrs++;
+          s[f.b].played++;
+          s[f.b].points++;
+          s[f.b].streak.push("NR");
+          return;
+        }
+        const loser = r.winner === f.a ? f.b : f.a;
+        s[r.winner].wins++;
+        s[r.winner].played++;
+        s[r.winner].points += 2;
+        s[r.winner].streak.push("W");
+        s[loser].losses++;
+        s[loser].played++;
+        s[loser].streak.push("L");
+        const rA = Number(r.scoreA?.runs || 0),
+          ovA = parseOvers(r.scoreA?.overs || 0);
+        const rB = Number(r.scoreB?.runs || 0),
+          ovB = parseOvers(r.scoreB?.overs || 0);
+        if (ovA > 0 && ovB > 0) {
+          s[f.a].runsFor += rA;
+          s[f.a].oversFor += ovA;
+          s[f.a].runsAgainst += rB;
+          s[f.a].oversAgainst += ovB;
+          s[f.b].runsFor += rB;
+          s[f.b].oversFor += ovB;
+          s[f.b].runsAgainst += rA;
+          s[f.b].oversAgainst += ovA;
+        }
+      });
+    Object.keys(s).forEach((tid) => {
+      const t = s[tid];
+      t.nrr =
+        (t.oversFor > 0 ? t.runsFor / t.oversFor : 0) -
+        (t.oversAgainst > 0 ? t.runsAgainst / t.oversAgainst : 0);
+    });
+    return s;
+  }, [tlMatch, fixtures]);
+
+  const tlPrevStandings = useMemo(() => {
+    if (tlMatch === 0) return null;
+    const s = {};
+    TEAMS.forEach((t) => {
+      s[t.id] = { points: 0, nrr: 0 };
+    });
+    [...fixtures]
+      .filter((f) => f.id < tlMatch && f.result)
+      .sort((a, b) => a.id - b.id)
+      .forEach((f) => {
+        const r = f.result;
+        if (r.type === "nr") {
+          s[f.a].points++;
+          s[f.b].points++;
+          return;
+        }
+        s[r.winner].points += 2;
+      });
+    return s;
+  }, [tlMatch, fixtures]);
+
+  const tlRanked = useMemo(
+    () =>
+      [...TEAMS].sort((a, b) => {
+        const sa = tlStandings[a.id],
+          sb = tlStandings[b.id];
+        if (sb.points !== sa.points) return sb.points - sa.points;
+        return (sb.nrr || 0) - (sa.nrr || 0);
+      }),
+    [tlStandings],
+  );
+
+  const prevRankMap = useMemo(() => {
+    if (!tlPrevStandings) return {};
+    const prevS = {};
+    TEAMS.forEach((t) => {
+      prevS[t.id] = { points: tlPrevStandings[t.id].points, nrr: 0 };
+    });
+    const pr = [...TEAMS].sort(
+      (a, b) => prevS[b.id].points - prevS[a.id].points,
+    );
+    return Object.fromEntries(pr.map((t, i) => [t.id, i + 1]));
+  }, [tlPrevStandings]);
+
+  const curFixture = fixtures.find((f) => f.id === tlMatch);
+  const curResult = curFixture?.result;
 
   const C = "#EA580C",
     Y = "#FBBF24",
@@ -1769,7 +1898,7 @@ export default function App() {
                           {maxW}
                         </td>
                         <td style={{ padding: "9px 7px", textAlign: "center" }}>
-                          <LastResultsBadge results={s.streak}/>
+                          <LastResultsBadge results={s.streak} />
                         </td>
                         <td style={{ padding: "9px 7px", textAlign: "center" }}>
                           {magicEl}
@@ -3879,6 +4008,443 @@ export default function App() {
                 </div>
               );
             })()}
+          </div>
+        )}
+        {/* ════════════════════════════════════════════════════════
+    TIMELAPSE
+════════════════════════════════════════════════════════ */}
+        {tab === "Timelapse" && (
+          <div>
+            <div
+              style={{
+                background: "var(--color-background-primary)",
+                borderRadius: 12,
+                border: `0.5px solid ${C}44`,
+                padding: "1rem 1.25rem",
+                marginBottom: 12,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 10,
+                  color: C,
+                  letterSpacing: 2,
+                  marginBottom: 10,
+                }}
+              >
+                TIMELAPSE POINTS TABLE
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  flexWrap: "wrap",
+                }}
+              >
+                <button
+                  onClick={() => setTlMatch((m) => Math.max(0, m - 1))}
+                  disabled={tlMatch === 0}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 8,
+                    border: "0.5px solid var(--color-border-secondary)",
+                    background: "transparent",
+                    color: "var(--color-text-primary)",
+                    cursor: "pointer",
+                    fontFamily: "sans-serif",
+                  }}
+                >
+                  ←
+                </button>
+                <input
+                  type="range"
+                  min={0}
+                  max={maxPlayed || 70}
+                  value={tlMatch}
+                  step={1}
+                  onChange={(e) => setTlMatch(+e.target.value)}
+                  style={{ flex: 1, minWidth: 120 }}
+                />
+                <button
+                  onClick={() =>
+                    setTlMatch((m) => Math.min(maxPlayed || 70, m + 1))
+                  }
+                  disabled={tlMatch >= (maxPlayed || 70)}
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 8,
+                    border: "0.5px solid var(--color-border-secondary)",
+                    background: "transparent",
+                    color: "var(--color-text-primary)",
+                    cursor: "pointer",
+                    fontFamily: "sans-serif",
+                  }}
+                >
+                  →
+                </button>
+              </div>
+
+              <div
+                style={{
+                  marginTop: 10,
+                  padding: "8px 12px",
+                  background: "var(--color-background-secondary)",
+                  borderRadius: 8,
+                  fontSize: 12,
+                }}
+              >
+                {tlMatch === 0 ? (
+                  <span style={{ color: "var(--color-text-tertiary)" }}>
+                    Season start — no matches played
+                  </span>
+                ) : curFixture ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: "var(--color-text-tertiary)",
+                        fontSize: 11,
+                      }}
+                    >
+                      M{tlMatch} · {curFixture.date}
+                    </span>
+                    <span
+                      style={{
+                        color: teamMap[curFixture.a].color,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {teamMap[curFixture.a].short}
+                    </span>
+                    <span style={{ color: "var(--color-text-tertiary)" }}>
+                      vs
+                    </span>
+                    <span
+                      style={{
+                        color: teamMap[curFixture.b].color,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {teamMap[curFixture.b].short}
+                    </span>
+                    {curResult?.type === "nr" && (
+                      <span
+                        style={{
+                          color: "#94a3b8",
+                          fontWeight: 600,
+                          fontSize: 11,
+                        }}
+                      >
+                        NO RESULT
+                      </span>
+                    )}
+                    {curResult?.type === "win" && (
+                      <span
+                        style={{
+                          color: teamMap[curResult.winner].color,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {teamMap[curResult.winner].short} won
+                      </span>
+                    )}
+                    {!curResult && (
+                      <span
+                        style={{
+                          color: "var(--color-text-tertiary)",
+                          fontStyle: "italic",
+                          fontSize: 11,
+                        }}
+                      >
+                        no result entered yet
+                      </span>
+                    )}
+                  </div>
+                ) : null}
+              </div>
+
+              <div
+                style={{
+                  width: "100%",
+                  height: 3,
+                  background: "var(--color-background-secondary)",
+                  borderRadius: 2,
+                  marginTop: 10,
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${(tlMatch / 70) * 100}%`,
+                    background: C,
+                    borderRadius: 2,
+                    transition: "width .2s",
+                  }}
+                />
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: "var(--color-background-primary)",
+                borderRadius: 12,
+                border: "0.5px solid var(--color-border-tertiary)",
+                overflow: "hidden",
+              }}
+            >
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  fontSize: 12,
+                }}
+              >
+                <thead>
+                  <tr style={{ background: "#080808" }}>
+                    {[
+                      "#",
+                      "Team",
+                      "P",
+                      "W",
+                      "L",
+                      "NR",
+                      "Pts",
+                      "NRR",
+                      "Form",
+                      "+/−",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        style={{
+                          padding: "9px 7px",
+                          textAlign: h === "Team" ? "left" : "center",
+                          fontWeight: 500,
+                          fontSize: 10,
+                          color: Y,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {tlRanked.map((team, idx) => {
+                    const s = tlStandings[team.id];
+                    const pos = idx + 1;
+                    const prevPos = prevRankMap[team.id] || pos;
+                    const diff = prevPos - pos;
+                    let changeEl = (
+                      <span
+                        style={{
+                          fontSize: 10,
+                          color: "var(--color-text-tertiary)",
+                        }}
+                      >
+                        —
+                      </span>
+                    );
+                    if (tlMatch > 0 && diff > 0)
+                      changeEl = (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            color: G,
+                            background: `${G}18`,
+                            padding: "1px 5px",
+                            borderRadius: 3,
+                            fontWeight: 500,
+                          }}
+                        >
+                          ▲{diff}
+                        </span>
+                      );
+                    else if (tlMatch > 0 && diff < 0)
+                      changeEl = (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            color: R,
+                            background: `${R}18`,
+                            padding: "1px 5px",
+                            borderRadius: 3,
+                            fontWeight: 500,
+                          }}
+                        >
+                          ▼{Math.abs(diff)}
+                        </span>
+                      );
+
+                    const last5 = s.streak.slice(-5);
+                    const top4 = idx < 4;
+                    return (
+                      <tr
+                        key={team.id}
+                        style={{
+                          background: top4 ? "#EA580C07" : "transparent",
+                          borderBottom:
+                            "0.5px solid var(--color-border-tertiary)",
+                        }}
+                      >
+                        <td
+                          style={{
+                            padding: "9px 7px",
+                            textAlign: "center",
+                            fontWeight: 700,
+                            color: top4 ? C : "var(--color-text-secondary)",
+                            fontSize: 13,
+                          }}
+                        >
+                          {pos}
+                        </td>
+                        <td style={{ padding: "9px 7px" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 7,
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: 9,
+                                height: 9,
+                                borderRadius: "50%",
+                                background: team.color,
+                                flexShrink: 0,
+                              }}
+                            />
+                            <span
+                              style={{
+                                fontWeight: top4 ? 600 : 400,
+                                color: "var(--color-text-primary)",
+                                fontSize: 12,
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {team.name}
+                            </span>
+                          </div>
+                        </td>
+                        <td
+                          style={{
+                            padding: "9px 7px",
+                            textAlign: "center",
+                            color: "var(--color-text-secondary)",
+                          }}
+                        >
+                          {s.played}
+                        </td>
+                        <td
+                          style={{
+                            padding: "9px 7px",
+                            textAlign: "center",
+                            fontWeight: 700,
+                            color: G,
+                          }}
+                        >
+                          {s.wins}
+                        </td>
+                        <td
+                          style={{
+                            padding: "9px 7px",
+                            textAlign: "center",
+                            color: R,
+                          }}
+                        >
+                          {s.losses}
+                        </td>
+                        <td
+                          style={{
+                            padding: "9px 7px",
+                            textAlign: "center",
+                            color: "#94a3b8",
+                          }}
+                        >
+                          {s.nrs}
+                        </td>
+                        <td
+                          style={{
+                            padding: "9px 7px",
+                            textAlign: "center",
+                            fontWeight: 700,
+                            color: Y,
+                            fontSize: 14,
+                          }}
+                        >
+                          {s.points}
+                        </td>
+                        <td
+                          style={{
+                            padding: "9px 7px",
+                            textAlign: "center",
+                            fontWeight: 500,
+                            color:
+                              s.nrr > 0
+                                ? G
+                                : s.nrr < 0
+                                  ? R
+                                  : "var(--color-text-secondary)",
+                            fontSize: 11,
+                          }}
+                        >
+                          {fmtNRR(s.nrr)}
+                        </td>
+                        <td style={{ padding: "9px 7px", textAlign: "center" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: 3,
+                              justifyContent: "center",
+                            }}
+                          >
+                            {last5.length === 0 ? (
+                              <span
+                                style={{
+                                  fontSize: 10,
+                                  color: "var(--color-text-tertiary)",
+                                }}
+                              >
+                                —
+                              </span>
+                            ) : (
+                              last5.map((r, i) => (
+                                <div
+                                  key={i}
+                                  style={{
+                                    width: 8,
+                                    height: 8,
+                                    borderRadius: "50%",
+                                    background:
+                                      r === "W"
+                                        ? "#22c55e"
+                                        : r === "L"
+                                          ? "#ef4444"
+                                          : "#94a3b8",
+                                  }}
+                                />
+                              ))
+                            )}
+                          </div>
+                        </td>
+                        <td style={{ padding: "9px 7px", textAlign: "center" }}>
+                          {changeEl}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
