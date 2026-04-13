@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from "react";
-import { TEAMS, TABS, DEFAULT_TEAM } from "./constants";
-import { buildFixtures, loadFixtures } from "./utils/storage";
+import { TEAMS, TABS, COLORS, DEFAULT_TEAM } from "./constants";
+import { loadFixtures, buildFixtures, saveFixtures } from "./utils/storage";
 import {
   computeStandings,
   computeQualification,
@@ -22,22 +22,25 @@ import {
   useAllQualification,
   useH2HStats,
 } from "./hooks";
-import { MatchModal } from "./components/shared";
-import {
-  Standings,
-  Fixtures,
-  Qualify,
-  Race,
-  Simulator,
-  H2H,
-  Timelapse,
-  HeaderSection,
-  TabNavigation,
-} from "./components/features";
+import { MatchModal } from "./components/shared/MatchModal";
+import { PointsChart } from "./components/common/PointsChart";
+import { QualRace } from "./components/common/QualRace";
+import { LastResultsBadge } from "./components/common/LastResultsBadge";
+import { StreakBadge } from "./components/common/StreakBadge";
+import HeaderSection from "./components/features/HeaderSection";
+import TabNavigation from "./components/features/TabNavigation";
+import Fixtures from "./components/features/Fixtures";
+import Qualify from "./components/features/Qualify";
+import Race from "./components/features/Race";
+import Simulator from "./components/features/Simulator";
+import H2H from "./components/features/H2H";
+import Timelapse from "./components/features/Timelapse";
+import Standings from "./components/features/Standings";
 
-const C = "#EA580C";
-const G = "#22c55e";
-const R = "#ef4444";
+const C = COLORS.primary;
+const Y = COLORS.secondary;
+const G = COLORS.success;
+const R = COLORS.error;
 
 export default function App() {
   const { fixtures, setFixtures, saveResult } = useFixtures();
@@ -220,6 +223,7 @@ export default function App() {
       <TabNavigation tab={tab} setTab={setTab} />
 
       <div style={{ maxWidth: 1000, margin: "0 auto", padding: "1rem" }}>
+        {/* Standings */}
         {tab === "Standings" && (
           <Standings
             rankedTeams={rankedTeams}
@@ -232,6 +236,7 @@ export default function App() {
           />
         )}
 
+        {/* Fixtures */}
         {tab === "Fixtures" && (
           <Fixtures
             filtered={filtered}
@@ -246,6 +251,7 @@ export default function App() {
           />
         )}
 
+        {/* Qualify */}
         {tab === "Qualify" && (
           <Qualify
             selectedTeam={selectedTeam}
@@ -263,6 +269,7 @@ export default function App() {
           />
         )}
 
+        {/* Race */}
         {tab === "Race" && (
           <Race
             standings={standings}
@@ -272,6 +279,7 @@ export default function App() {
           />
         )}
 
+        {/* Simulator */}
         {tab === "Simulator" && (
           <Simulator
             fixtures={fixtures}
@@ -289,6 +297,7 @@ export default function App() {
           />
         )}
 
+        {/* H2H */}
         {tab === "H2H" && (
           <H2H
             h2hA={h2hA}
@@ -304,6 +313,7 @@ export default function App() {
           />
         )}
 
+        {/* Timelapse */}
         {tab === "Timelapse" && (
           <Timelapse
             fixtures={fixtures}
