@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { TEAMS, COLORS, teamMap } from "../../constants";
-import { computeStandings, parseOvers } from "../../utils/math";
+import { parseOvers } from "../../utils/math";
 import { fmtNRR } from "../../utils/helpers";
 
 const C = COLORS.primary;
@@ -8,7 +8,7 @@ const Y = COLORS.secondary;
 const G = COLORS.success;
 const R = COLORS.error;
 
-export function TimelapseTab({ fixtures, tlMatch: initialTlMatch, setTlMatch, maxPlayed }) {
+export function TimelapseTab({ fixtures, tlMatch: initialTlMatch, maxPlayed }) {
   const [tlMatch, setTlMatchLocal] = useState(initialTlMatch);
 
   const tlStandings = useMemo(() => {
@@ -85,6 +85,86 @@ export function TimelapseTab({ fixtures, tlMatch: initialTlMatch, setTlMatch, ma
       }),
     [tlStandings],
   );
+
+  // Compute previous standings for ranking change indicator
+  const prevStandings = useMemo(() => {
+    if (tlMatch === 0) return {};
+    const p = {};
+    TEAMS.forEach((t) => {
+      p[t.id] = {
+        wins: 0,
+        losses: 0,
+        nrs: 0,
+        played: 0,
+        points: 0,
+        runsFor: 0,
+        oversFor: 0,
+        runsAgainst: 0,
+        oversAgainst: 0,
+      };
+    });
+    [...fixtures]
+      .filter((f) => f.id < tlMatch && f.result)
+      .sort((a, b) => a.id - b.id)
+      .forEach((f) => {
+        const r = f.result;
+        if (r.type === "nr") {
+          p[f.a].nrs++;
+          p[f.a].played++;
+          p[f.a].points++;
+          p[f.b].nrs++;
+          p[f.b].played++;
+          p[f.b].points++;
+          return;
+        }
+        const loser = r.winner === f.a ? f.b : f.a;
+        p[r.winner].wins++;
+        p[r.winner].played++;
+        p[r.winner].points += 2;
+        p[loser].losses++;
+        p[loser].played++;
+        const rA = Number(r.scoreA?.runs || 0),
+          ovA = parseOvers(r.scoreA?.overs || 0);
+        const rB = Number(r.scoreB?.runs || 0),
+          ovB = parseOvers(r.scoreB?.overs || 0);
+        if (ovA > 0 && ovB > 0) {
+          p[f.a].runsFor += rA;
+          p[f.a].oversFor += ovA;
+          p[f.a].runsAgainst += rB;
+          p[f.a].oversAgainst += ovB;
+          p[f.b].runsFor += rB;
+          p[f.b].oversFor += ovB;
+          p[f.b].runsAgainst += rA;
+          p[f.b].oversAgainst += ovA;
+        }
+      });
+    Object.keys(p).forEach((tid) => {
+      const t = p[tid];
+      t.nrr =
+        (t.oversFor > 0 ? t.runsFor / t.oversFor : 0) -
+        (t.oversAgainst > 0 ? t.runsAgainst / t.oversAgainst : 0);
+    });
+    return p;
+  }, [tlMatch, fixtures]);
+
+  const prevRanked = useMemo(() => {
+    if (tlMatch === 0) return [];
+    return [...TEAMS].sort((a, b) => {
+      const pa = prevStandings[a.id],
+        pb = prevStandings[b.id];
+      if (pb.points !== pa.points) return pb.points - pa.points;
+      return (pb.nrr || 0) - (pa.nrr || 0);
+    });
+  }, [prevStandings, tlMatch]);
+
+  const rankChange = useMemo(() => {
+    const change = {};
+    tlRanked.forEach((team, idx) => {
+      const prevIdx = prevRanked.findIndex((t) => t.id === team.id);
+      change[team.id] = prevIdx === -1 ? 0 : prevIdx - idx;
+    });
+    return change;
+  }, [tlRanked, prevRanked]);
 
   const curFixture = fixtures.find((f) => f.id === tlMatch);
   const curResult = curFixture?.result;
@@ -205,7 +285,7 @@ export function TimelapseTab({ fixtures, tlMatch: initialTlMatch, setTlMatch, ma
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
           <thead>
             <tr style={{ background: "#080808" }}>
-              {["#", "Team", "P", "W", "L", "NR", "Pts", "NRR", "Form"].map((h) => (
+              {["#", "Team", "P", "W", "L", "NR", "Pts", "NRR", "Form", "Chg"].map((h) => (
                 <th
                   key={h}
                   style={{
@@ -298,6 +378,28 @@ export function TimelapseTab({ fixtures, tlMatch: initialTlMatch, setTlMatch, ma
                         ))
                       )}
                     </div>
+                  </td>
+                  <td
+                    style={{
+                      padding: "9px 7px",
+                      textAlign: "center",
+                      fontSize: 11,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {rankChange[team.id] > 0 && (
+                      <span style={{ color: G }}>
+                        ▲{rankChange[team.id]}
+                      </span>
+                    )}
+                    {rankChange[team.id] < 0 && (
+                      <span style={{ color: R }}>
+                        ▼{Math.abs(rankChange[team.id])}
+                      </span>
+                    )}
+                    {rankChange[team.id] === 0 && (
+                      <span style={{ color: "var(--color-text-tertiary)" }}>—</span>
+                    )}
                   </td>
                 </tr>
               );
