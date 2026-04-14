@@ -2,6 +2,7 @@ export { default as Standings } from "./Standings";
 export { default as Fixtures } from "./Fixtures";
 export { default as Qualify } from "./Qualify";
 export { default as Race } from "./Race";
+export { default as Scenarios } from "./Scenarios";
 export { default as Simulator } from "./Simulator";
 export { default as H2H } from "./H2H";
 export { default as Timelapse } from "./Timelapse";

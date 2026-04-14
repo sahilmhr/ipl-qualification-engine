@@ -15,6 +15,7 @@ export function HeaderSection({
   fileInputRef,
   handleImport,
   resetAll,
+  loadTestData,
 }) {
   return (
     <div
@@ -117,6 +118,21 @@ export function HeaderSection({
               style={{ display: "none" }}
               accept=".json"
             />
+            <button
+              onClick={loadTestData}
+              style={{
+                padding: "5px 10px",
+                background: "transparent",
+                border: `0.5px solid ${Y}66`,
+                borderRadius: 6,
+                color: Y,
+                fontSize: 11,
+                cursor: "pointer",
+                fontFamily: "sans-serif",
+              }}
+            >
+              🧪 Test Data
+            </button>
             <button
               onClick={resetAll}
               style={{

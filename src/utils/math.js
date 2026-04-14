@@ -292,3 +292,92 @@ export function findCriticalMatches(teamId, fixtures) {
   }
   return critical.sort((a, b) => b.impact - a.impact).slice(0, 6);
 }
+
+// Generate all scenarios where team can qualify (excluding their own matches)
+export function generateQualificationScenarios(teamId, fixtures) {
+  const blank = { runs: "", wickets: "", overs: "" };
+  // Find unplayed matches not involving the selected team (rival matches)
+  const rivalMatches = fixtures.filter(
+    (f) => !f.result && f.a !== teamId && f.b !== teamId,
+  );
+
+  console.log(
+    `[Scenarios] Team: ${teamId}, Rival matches: ${rivalMatches.length}, Unplayed total: ${fixtures.filter((f) => !f.result).length}`,
+  );
+
+  if (rivalMatches.length === 0) {
+    console.log(`[Scenarios] No rival matches - returning empty`);
+    return [];
+  }
+  if (rivalMatches.length > 16) {
+    // Limit to prevent exponential explosion (2^16 = 65k scenarios)
+    console.log(
+      `[Scenarios] Too many rival matches (${rivalMatches.length}) - returning empty`,
+    );
+    return [];
+  }
+
+  const scenarios = [];
+
+  // Generate all possible combinations of results (2^n)
+  const totalCombos = Math.pow(2, rivalMatches.length);
+  for (let combo = 0; combo < totalCombos; combo++) {
+    // Apply this combination of results
+    const scenarioFixtures = fixtures.map((f) => {
+      const matchIdx = rivalMatches.findIndex((rm) => rm.id === f.id);
+      if (matchIdx === -1) return f; // Not a rival match, keep as is
+
+      // Check if this combo has this match going to team A or team B
+      const bitSet = (combo >> matchIdx) & 1;
+      const winner = bitSet === 0 ? f.a : f.b;
+      return {
+        ...f,
+        result: {
+          type: "win",
+          winner,
+          scoreA:
+            winner === f.a
+              ? { runs: "150", wickets: "8", overs: "20" }
+              : { runs: "140", wickets: "9", overs: "19.4" },
+          scoreB:
+            winner === f.b
+              ? { runs: "150", wickets: "8", overs: "20" }
+              : { runs: "140", wickets: "9", overs: "19.4" },
+        },
+      };
+    });
+
+    // Check standings and qualification
+    const standings = computeStandings(scenarioFixtures);
+    const ranked = [...TEAMS].sort((a, b) => {
+      const sa = standings[a.id],
+        sb = standings[b.id];
+      if (sb.points !== sa.points) return sb.points - sa.points;
+      return (sb.nrr || 0) - (sa.nrr || 0);
+    });
+
+    const qualifyRank = ranked.findIndex((t) => t.id === teamId) + 1;
+
+    // Only add if team qualifies (Top 4)
+    if (qualifyRank <= 4) {
+      // Build scenario object showing which matches were flipped
+      const results = {};
+      rivalMatches.forEach((match, idx) => {
+        const bitSet = (combo >> idx) & 1;
+        results[match.id] = bitSet === 0 ? match.a : match.b;
+      });
+
+      scenarios.push({
+        rank: qualifyRank,
+        standings,
+        results, // { matchId: winner }
+        teamRank: qualifyRank,
+      });
+    }
+  }
+
+  console.log(
+    `[Scenarios] Tested ${totalCombos} combinations, found ${scenarios.length} qualifying scenarios`,
+  );
+  return scenarios;
+}

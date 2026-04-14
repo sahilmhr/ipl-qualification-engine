@@ -13,6 +13,7 @@ import {
   exportStandingsText,
   fmtNRR,
   fmtScore,
+  generateTestResults,
 } from "./utils/helpers";
 import {
   useFixtures,
@@ -28,6 +29,7 @@ import {
   Fixtures,
   Qualify,
   Race,
+  Scenarios,
   Simulator,
   H2H,
   Timelapse,
@@ -186,6 +188,13 @@ export default function App() {
     reader.readAsText(file);
   };
 
+  const loadTestData = () => {
+    const testFixtures = generateTestResults(fixtures);
+    setFixtures(testFixtures);
+    setExportMsg("✓ Test data loaded!");
+    setTimeout(() => setExportMsg(""), 2000);
+  };
+
   return (
     <div
       style={{
@@ -214,6 +223,7 @@ export default function App() {
         fileInputRef={fileInputRef}
         handleImport={handleImport}
         resetAll={resetAll}
+        loadTestData={loadTestData}
       />
 
       {/* Tabs */}
@@ -268,6 +278,16 @@ export default function App() {
             standings={standings}
             fixtures={fixtures}
             allQual={allQual}
+            rankedTeams={rankedTeams}
+          />
+        )}
+
+        {tab === "Scenarios" && (
+          <Scenarios
+            selectedTeam={selectedTeam}
+            setSelectedTeam={setSelectedTeam}
+            fixtures={fixtures}
+            standings={standings}
             rankedTeams={rankedTeams}
           />
         )}

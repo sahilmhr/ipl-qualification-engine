@@ -100,6 +100,7 @@ export const TABS = [
   "Fixtures",
   "Qualify",
   "Race",
+  "Scenarios",
   "Simulator",
   "H2H",
   "Timelapse",
