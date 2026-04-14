@@ -120,4 +120,4 @@ export const DEFAULT_TEAM = "MI";
 export const TOTAL_MATCHES = 70;
 export const MATCHES_PER_TEAM = 14;
 export const PLAYOFF_SLOTS = 4;
-export const LS_KEY = "ipl2026_fixtures_v3";
+export const LS_KEY = "fixtures";

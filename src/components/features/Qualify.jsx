@@ -1,5 +1,6 @@
 import { TEAMS, COLORS } from "../../constants";
 import { teamMap } from "../../constants";
+import { fmtNRR } from "../../utils/helpers";
 
 const C = COLORS.primary;
 const Y = COLORS.secondary;
@@ -164,40 +165,307 @@ export function QualifyTab({
 
       {qualResult && (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {/* Results rendered similarly to original */}
-          <div
-            style={{
-              background: "var(--color-background-primary)",
-              borderRadius: 10,
-              border: "0.5px solid var(--color-border-tertiary)",
-              padding: "1rem",
-            }}
-          >
-            <div
-              style={{
-                fontSize: 14,
-                fontWeight: 700,
-                color:
-                  qualResult.impossible
-                    ? R
-                    : qualResult.alreadyGuaranteed
-                      ? G
-                      : C,
-              }}
-            >
-              {qualResult.alreadyGuaranteed ? (
-                "Already Guaranteed ✓"
-              ) : qualResult.impossible ? (
-                "Mathematically Eliminated"
-              ) : (
-                <>
-                  Need {qualResult.minAdditionalWins} more win
-                  {qualResult.minAdditionalWins !== 1 ? "s" : ""} → guaranteed at{" "}
-                  {qualResult.currentWins + qualResult.minAdditionalWins}W
-                </>
-              )}
-            </div>
-          </div>
+          {(() => {
+            const {
+              currentWins,
+              remaining,
+              minAdditionalWins,
+              alreadyGuaranteed,
+              impossible,
+            } = qualResult;
+            const targetWins = alreadyGuaranteed
+              ? currentWins
+              : impossible
+                ? currentWins + remaining
+                : currentWins + minAdditionalWins;
+            const vc = impossible ? R : alreadyGuaranteed ? G : C;
+
+            return (
+              <div>
+                {/* Results rendered similarly to original */}
+                <div
+                  style={{
+                    background: "var(--color-background-primary)",
+                    borderRadius: 10,
+                    border: "0.5px solid var(--color-border-tertiary)",
+                    padding: "1rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color:
+                        qualResult.impossible
+                          ? R
+                          : qualResult.alreadyGuaranteed
+                            ? G
+                            : C,
+                    }}
+                  >
+                    {qualResult.alreadyGuaranteed ? (
+                      "Already Guaranteed ✓"
+                    ) : qualResult.impossible ? (
+                      "Mathematically Eliminated"
+                    ) : (
+                      <>
+                        Need {qualResult.minAdditionalWins} more win
+                        {qualResult.minAdditionalWins !== 1 ? "s" : ""} → guaranteed at{" "}
+                        {qualResult.currentWins + qualResult.minAdditionalWins}W
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Win Tracker */}
+                <div
+                  style={{
+                    background: "var(--color-background-primary)",
+                    borderRadius: 10,
+                    border: "0.5px solid var(--color-border-tertiary)",
+                    padding: "1rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 10,
+                      color: "var(--color-text-secondary)",
+                      marginBottom: 8,
+                      letterSpacing: 2,
+                    }}
+                  >
+                    WIN TRACKER — 14 MATCHES
+                  </div>
+                  <div
+                    style={{ display: "flex", gap: 3, marginBottom: 7 }}
+                  >
+                    {Array.from({ length: 14 }).map((_, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          flex: 1,
+                          height: 22,
+                          borderRadius: 3,
+                          background:
+                            i < currentWins
+                              ? G
+                              : !alreadyGuaranteed && i < targetWins
+                                ? C
+                                : i < currentWins + remaining
+                                  ? "#ffffff15"
+                                  : "#ffffff06",
+                          border:
+                            !alreadyGuaranteed &&
+                            i >= currentWins &&
+                            i < targetWins
+                              ? `1px solid ${Y}`
+                              : "none",
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 12,
+                      fontSize: 10,
+                      color: "var(--color-text-secondary)",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <span>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: 8,
+                          height: 8,
+                          background: G,
+                          borderRadius: 2,
+                          marginRight: 3,
+                        }}
+                      ></span>
+                      Won ({currentWins})
+                    </span>
+                    {!alreadyGuaranteed && (
+                      <span>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: 8,
+                            height: 8,
+                            background: C,
+                            border: `1px solid ${Y}`,
+                            borderRadius: 2,
+                            marginRight: 3,
+                          }}
+                        ></span>
+                        Need ({minAdditionalWins})
+                      </span>
+                    )}
+                    <span>
+                      <span
+                        style={{
+                          display: "inline-block",
+                          width: 8,
+                          height: 8,
+                          background: "#ffffff15",
+                          borderRadius: 2,
+                          marginRight: 3,
+                        }}
+                      ></span>
+                      Unplayed ({remaining})
+                    </span>
+                    <span
+                      style={{
+                        marginLeft: "auto",
+                        fontWeight: 600,
+                        color: vc,
+                      }}
+                    >
+                      Target: {targetWins}W
+                    </span>
+                  </div>
+                </div>
+
+                {/* Rival Analysis */}
+                <div
+                  style={{
+                    background: "var(--color-background-primary)",
+                    borderRadius: 10,
+                    border: "0.5px solid var(--color-border-tertiary)",
+                    padding: "1rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 10,
+                      color: "var(--color-text-secondary)",
+                      marginBottom: 8,
+                      letterSpacing: 2,
+                    }}
+                  >
+                    RIVAL ANALYSIS
+                  </div>
+                  {TEAMS.filter((t) => t.id !== selectedTeam)
+                    .sort(
+                      (a, b) => standings[b.id].wins - standings[a.id].wins,
+                    )
+                    .map((rivalTeam) => {
+                      const s = standings[rivalTeam.id];
+                      const tr = fixtures.filter(
+                        (f) =>
+                          !f.result && (f.a === rivalTeam.id || f.b === rivalTeam.id),
+                      ).length;
+                      const h2h = fixtures.filter(
+                        (f) =>
+                          !f.result &&
+                          ((f.a === selectedTeam && f.b === rivalTeam.id) ||
+                            (f.b === selectedTeam && f.a === rivalTeam.id)),
+                      ).length;
+                      const canReach = s.wins + tr >= targetWins + 1;
+                      return (
+                        <div
+                          key={rivalTeam.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            marginBottom: 5,
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: 7,
+                              height: 7,
+                              borderRadius: "50%",
+                              background: rivalTeam.color,
+                              flexShrink: 0,
+                            }}
+                          ></span>
+                          <span
+                            style={{
+                              width: 34,
+                              fontWeight: 600,
+                              fontSize: 11,
+                              color: "var(--color-text-primary)",
+                            }}
+                          >
+                            {rivalTeam.short}
+                          </span>
+                          <div
+                            style={{
+                              flex: 1,
+                              height: 7,
+                              background: "#ffffff10",
+                              borderRadius: 3,
+                              overflow: "hidden",
+                              minWidth: 50,
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: `${(s.wins / 14) * 100}%`,
+                                height: "100%",
+                                background: rivalTeam.color,
+                                borderRadius: 3,
+                              }}
+                            ></div>
+                          </div>
+                          <span
+                            style={{
+                              width: 52,
+                              textAlign: "right",
+                              fontSize: 10,
+                              color: "var(--color-text-secondary)",
+                            }}
+                          >
+                            {s.wins}W +{tr}
+                          </span>
+                          <span
+                            style={{
+                              width: 52,
+                              textAlign: "right",
+                              fontSize: 10,
+                              color: s.nrr >= 0 ? G : R,
+                            }}
+                          >
+                            {fmtNRR(s.nrr)}
+                          </span>
+                          {h2h > 0 && (
+                            <span
+                              style={{
+                                fontSize: 10,
+                                color: Y,
+                                background: `${Y}11`,
+                                padding: "1px 5px",
+                                borderRadius: 3,
+                              }}
+                            >
+                              H2H {h2h}
+                            </span>
+                          )}
+                          <span
+                            style={{
+                              width: 44,
+                              textAlign: "center",
+                              fontSize: 10,
+                              fontWeight: 600,
+                              borderRadius: 4,
+                              padding: "2px 0",
+                              color: canReach ? R : G,
+                              background: canReach ? `${R}11` : `${G}11`,
+                            }}
+                          >
+                            {canReach ? "threat" : "safe"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            );
+          })()}
+
 
           {criticalMatches.length > 0 && (
             <div

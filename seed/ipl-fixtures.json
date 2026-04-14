@@ -644,7 +644,20 @@
     "a": "CSK",
     "b": "KKR",
     "date": "14 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "CSK",
+      "scoreA": {
+        "runs": "192",
+        "wickets": "5",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "160",
+        "wickets": "7",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
