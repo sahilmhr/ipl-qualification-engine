@@ -675,7 +675,20 @@
     "a": "RCB",
     "b": "LSG",
     "date": "15 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "RCB",
+      "scoreA": {
+        "runs": "149",
+        "wickets": "5",
+        "overs": "15.1"
+      },
+      "scoreB": {
+        "runs": "146",
+        "wickets": "10",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
