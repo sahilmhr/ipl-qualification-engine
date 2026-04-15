@@ -296,17 +296,23 @@ export function findCriticalMatches(teamId, fixtures) {
 // Generate all scenarios where team can qualify (excluding their own matches)
 export function generateQualificationScenarios(teamId, fixtures) {
   const blank = { runs: "", wickets: "", overs: "" };
-  // Find unplayed matches not involving the selected team (rival matches)
-  const rivalMatches = fixtures.filter(
-    (f) => !f.result && f.a !== teamId && f.b !== teamId,
+  // Find all unplayed matches
+  const unplayedMatches = fixtures.filter((f) => !f.result);
+
+  // Separate matches involving the selected team and others
+  const teamMatches = unplayedMatches.filter(
+    (f) => f.a === teamId || f.b === teamId
+  );
+  const rivalMatches = unplayedMatches.filter(
+    (f) => f.a !== teamId && f.b !== teamId
   );
 
   console.log(
-    `[Scenarios] Team: ${teamId}, Rival matches: ${rivalMatches.length}, Unplayed total: ${fixtures.filter((f) => !f.result).length}`,
+    `[Scenarios] Team: ${teamId}, Team matches: ${teamMatches.length}, Rival matches: ${rivalMatches.length}, Unplayed total: ${unplayedMatches.length}`
   );
 
-  if (rivalMatches.length === 0) {
-    console.log(`[Scenarios] No rival matches - returning empty`);
+  if (unplayedMatches.length === 0) {
+    console.log(`[Scenarios] No unplayed matches - returning empty`);
     return [];
   }
   if (rivalMatches.length > 16) {
@@ -319,15 +325,30 @@ export function generateQualificationScenarios(teamId, fixtures) {
 
   const scenarios = [];
 
-  // Generate all possible combinations of results (2^n)
+  // Generate all possible combinations of rival match results (2^n)
   const totalCombos = Math.pow(2, rivalMatches.length);
   for (let combo = 0; combo < totalCombos; combo++) {
     // Apply this combination of results
     const scenarioFixtures = fixtures.map((f) => {
-      const matchIdx = rivalMatches.findIndex((rm) => rm.id === f.id);
-      if (matchIdx === -1) return f; // Not a rival match, keep as is
+      // If match is already played, keep as is
+      if (f.result) return f;
 
-      // Check if this combo has this match going to team A or team B
+      // If match involves the selected team, always set as win for selected team
+      if (f.a === teamId || f.b === teamId) {
+        return {
+          ...f,
+          result: {
+            type: "win",
+            winner: teamId,
+            scoreA: { runs: "150", wickets: "8", overs: "20" },
+            scoreB: { runs: "140", wickets: "9", overs: "19.4" },
+          },
+        };
+      }
+
+      // Otherwise, set result based on current combo
+      const matchIdx = rivalMatches.findIndex((rm) => rm.id === f.id);
+      if (matchIdx === -1) return f; // Should not happen
       const bitSet = (combo >> matchIdx) & 1;
       const winner = bitSet === 0 ? f.a : f.b;
       return {
@@ -362,9 +383,15 @@ export function generateQualificationScenarios(teamId, fixtures) {
     if (qualifyRank <= 4) {
       // Build scenario object showing which matches were flipped
       const results = {};
-      rivalMatches.forEach((match, idx) => {
-        const bitSet = (combo >> idx) & 1;
-        results[match.id] = bitSet === 0 ? match.a : match.b;
+      // For all unplayed matches, record the winner
+      unplayedMatches.forEach((match, idx) => {
+        if (match.a === teamId || match.b === teamId) {
+          results[match.id] = teamId;
+        } else {
+          const matchIdx = rivalMatches.findIndex((rm) => rm.id === match.id);
+          const bitSet = (combo >> matchIdx) & 1;
+          results[match.id] = bitSet === 0 ? match.a : match.b;
+        }
       });
 
       scenarios.push({
