@@ -1,11 +1,10 @@
-import { useState, useMemo, useCallback, useRef } from "react";
-import { TEAMS, TABS, DEFAULT_TEAM } from "./constants";
-import { buildFixtures, loadFixtures } from "./utils/storage";
+import { useState, useMemo, useRef } from "react";
+import { TEAMS, DEFAULT_TEAM } from "./constants";
+import { buildFixtures } from "./utils/storage";
 import {
   computeStandings,
   computeQualification,
   findCriticalMatches,
-  computePointsProgression,
 } from "./utils/math";
 import {
   applyScenario,

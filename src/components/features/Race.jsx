@@ -1,6 +1,5 @@
 import { COLORS } from "../../constants";
 import { QualRace } from "../common/QualRace";
-import { fmtNRR } from "../../utils/helpers";
 import { TEAMS } from "../../constants";
 
 const C = COLORS.primary;

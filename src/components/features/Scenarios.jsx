@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { TEAMS, COLORS, teamMap } from "../../constants";
-import { generateQualificationScenarios, computeStandings } from "../../utils/math";
+import { generateQualificationScenarios } from "../../utils/math";
 import { fmtNRR } from "../../utils/helpers";
 
 const C = COLORS.primary;
@@ -8,7 +8,7 @@ const Y = COLORS.secondary;
 const G = COLORS.success;
 const R = COLORS.error;
 
-export function ScenariosTab({ selectedTeam, setSelectedTeam, fixtures, standings, rankedTeams }) {
+export function ScenariosTab({ selectedTeam, setSelectedTeam, fixtures, rankedTeams }) {
   const [scenarios, setScenarios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeScenarios, setActiveScenarios] = useState(new Set());
@@ -251,7 +251,6 @@ export function ScenariosTab({ selectedTeam, setSelectedTeam, fixtures, standing
                   </div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                     {matchResults.slice(0, 6).map(([matchId, winner]) => {
-                      const match = fixtures.find((f) => f.id === parseInt(matchId));
                       const winnerTeam = teamMap[winner];
                       return (
                         <span

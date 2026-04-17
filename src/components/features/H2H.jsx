@@ -2,7 +2,7 @@ import { TEAMS } from "../../constants";
 import { teamMap } from "../../constants";
 import { StreakBadge } from "../common/StreakBadge";
 
-export function H2HTab({ h2hA, h2hB, setH2hA, setH2hB, h2hStats, standings, rankedTeams, fixtures, setModalMatch, fmtScore }) {
+export function H2HTab({ h2hA, h2hB, setH2hA, setH2hB, h2hStats, standings, rankedTeams, setModalMatch }) {
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>

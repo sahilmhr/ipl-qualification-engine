@@ -1,6 +1,6 @@
 import { TEAMS, COLORS } from "../../constants";
 import { teamMap } from "../../constants";
-import { computeStandings, computeQualification } from "../../utils/math";
+import { computeQualification } from "../../utils/math";
 
 const C = COLORS.primary;
 const G = COLORS.success;
