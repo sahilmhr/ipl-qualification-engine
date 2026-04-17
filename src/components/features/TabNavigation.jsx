@@ -25,7 +25,10 @@ export function TabNavigation({ tab, setTab }) {
         {TABS.map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => {
+              setTab(t);
+              localStorage.setItem('tab', t);
+            }}
             style={{
               padding: "10px 16px",
               border: "none",

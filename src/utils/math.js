@@ -162,11 +162,13 @@ export function combinations(arr, k) {
 
 // Check if 4 or more teams can exceed a threshold
 export function canFourTeamsExceed(teamId, threshold, fixtures, standings) {
-  const others = TEAMS.map((t) => t.id).filter((id) => id !== teamId);
-  const remMatches = fixtures.filter(
+  // Fix 1: derive teams from standings, not a global
+  const others = Object.keys(standings).filter((id) => id !== teamId);
+
+  const allRemMatches = fixtures.filter(
     (f) => !f.result && f.a !== teamId && f.b !== teamId,
   );
-  const M = remMatches.length;
+
   const needs = {},
     maxPoss = {};
   others.forEach((tid) => {
@@ -179,23 +181,34 @@ export function canFourTeamsExceed(teamId, threshold, fixtures, standings) {
   });
   const viable = others.filter((tid) => maxPoss[tid] >= threshold);
   if (viable.length < 4) return false;
-  const SRC = 0,
-    SINK = M + others.length + 1,
-    NN = SINK + 1;
-  const tIdx = {};
-  others.forEach((tid, i) => {
-    tIdx[tid] = M + 1 + i;
-  });
-  const base = Array.from({ length: NN }, () => new Array(NN).fill(0));
-  remMatches.forEach((m, i) => {
-    base[SRC][i + 1] = 1;
-    if (tIdx[m.a] !== undefined) base[i + 1][tIdx[m.a]] = 1;
-    if (tIdx[m.b] !== undefined) base[i + 1][tIdx[m.b]] = 1;
-  });
+
   for (const subset of combinations(viable, 4)) {
     const required = subset.reduce((s, tid) => s + needs[tid], 0);
     if (required === 0) return true;
-    const cap = base.map((r) => r.slice());
+
+    // Fix 2: only include matches relevant to this subset
+    const subsetMatches = allRemMatches.filter(
+      (m) => subset.includes(m.a) || subset.includes(m.b),
+    );
+
+    const M = subsetMatches.length;
+    const SINK = M + subset.length + 1;
+    const NN = SINK + 1;
+    const SRC = 0;
+
+    const tIdx = {};
+    subset.forEach((tid, i) => {
+      tIdx[tid] = M + 1 + i;
+    });
+
+    const cap = Array.from({ length: NN }, () => new Array(NN).fill(0));
+
+    subsetMatches.forEach((m, i) => {
+      cap[SRC][i + 1] = 1;
+      if (tIdx[m.a] !== undefined) cap[i + 1][tIdx[m.a]] = 1;
+      if (tIdx[m.b] !== undefined) cap[i + 1][tIdx[m.b]] = 1;
+    });
+
     subset.forEach((tid) => {
       cap[tIdx[tid]][SINK] = needs[tid];
     });
@@ -295,20 +308,19 @@ export function findCriticalMatches(teamId, fixtures) {
 
 // Generate all scenarios where team can qualify (excluding their own matches)
 export function generateQualificationScenarios(teamId, fixtures) {
-  const blank = { runs: "", wickets: "", overs: "" };
   // Find all unplayed matches
   const unplayedMatches = fixtures.filter((f) => !f.result);
 
   // Separate matches involving the selected team and others
   const teamMatches = unplayedMatches.filter(
-    (f) => f.a === teamId || f.b === teamId
+    (f) => f.a === teamId || f.b === teamId,
   );
   const rivalMatches = unplayedMatches.filter(
-    (f) => f.a !== teamId && f.b !== teamId
+    (f) => f.a !== teamId && f.b !== teamId,
   );
 
   console.log(
-    `[Scenarios] Team: ${teamId}, Team matches: ${teamMatches.length}, Rival matches: ${rivalMatches.length}, Unplayed total: ${unplayedMatches.length}`
+    `[Scenarios] Team: ${teamId}, Team matches: ${teamMatches.length}, Rival matches: ${rivalMatches.length}, Unplayed total: ${unplayedMatches.length}`,
   );
 
   if (unplayedMatches.length === 0) {
@@ -384,7 +396,7 @@ export function generateQualificationScenarios(teamId, fixtures) {
       // Build scenario object showing which matches were flipped
       const results = {};
       // For all unplayed matches, record the winner
-      unplayedMatches.forEach((match, idx) => {
+      unplayedMatches.forEach((match) => {
         if (match.a === teamId || match.b === teamId) {
           results[match.id] = teamId;
         } else {
