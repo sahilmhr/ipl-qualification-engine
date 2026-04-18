@@ -768,7 +768,20 @@
     "a": "RCB",
     "b": "DC",
     "date": "18 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "DC",
+      "scoreA": {
+        "runs": "175",
+        "wickets": "8",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "179",
+        "wickets": "4",
+        "overs": "19.5"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
@@ -786,7 +799,20 @@
     "a": "SRH",
     "b": "CSK",
     "date": "18 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "SRH",
+      "scoreA": {
+        "runs": "194",
+        "wickets": "9",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "184",
+        "wickets": "8",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",

@@ -1,19 +1,19 @@
 // Teams data
 export const TEAMS = [
+  { id: "DC", name: "Delhi Capitals", short: "DC", color: "#2563EB" },
+  { id: "CSK", name: "Chennai Super Kings", short: "CSK", color: "#D97706" },
+  { id: "GT", name: "Gujarat Titans", short: "GT", color: "#16A34A" },
+  { id: "MI", name: "Mumbai Indians", short: "MI", color: "#1D4ED8" },
+  { id: "KKR", name: "Kolkata Knight Riders", short: "KKR", color: "#7C3AED" },
+  { id: "LSG", name: "Lucknow Super Giants", short: "LSG", color: "#0EA5E9" },
+  { id: "PBKS", name: "Punjab Kings", short: "PBKS", color: "#DC2626" },
+  { id: "RR", name: "Rajasthan Royals", short: "RR", color: "#BE185D" },
   {
     id: "RCB",
     name: "Royal Challengers Bengaluru",
     short: "RCB",
     color: "#EC1C24",
   },
-  { id: "MI", name: "Mumbai Indians", short: "MI", color: "#1D4ED8" },
-  { id: "RR", name: "Rajasthan Royals", short: "RR", color: "#BE185D" },
-  { id: "PBKS", name: "Punjab Kings", short: "PBKS", color: "#DC2626" },
-  { id: "LSG", name: "Lucknow Super Giants", short: "LSG", color: "#0EA5E9" },
-  { id: "KKR", name: "Kolkata Knight Riders", short: "KKR", color: "#7C3AED" },
-  { id: "CSK", name: "Chennai Super Kings", short: "CSK", color: "#D97706" },
-  { id: "DC", name: "Delhi Capitals", short: "DC", color: "#2563EB" },
-  { id: "GT", name: "Gujarat Titans", short: "GT", color: "#16A34A" },
   { id: "SRH", name: "Sunrisers Hyderabad", short: "SRH", color: "#EA580C" },
 ];
 
@@ -117,7 +117,7 @@ export const COLORS = {
 };
 
 // Defaults
-export const DEFAULT_TEAM = "MI";
+export const DEFAULT_TEAM = "DC";
 export const TOTAL_MATCHES = 70;
 export const MATCHES_PER_TEAM = 14;
 export const PLAYOFF_SLOTS = 4;
