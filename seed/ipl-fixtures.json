@@ -830,7 +830,20 @@
     "a": "KKR",
     "b": "RR",
     "date": "19 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "KKR",
+      "scoreA": {
+        "runs": "161",
+        "wickets": "6",
+        "overs": "19.4"
+      },
+      "scoreB": {
+        "runs": "155",
+        "wickets": "9",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
@@ -848,7 +861,20 @@
     "a": "PBKS",
     "b": "LSG",
     "date": "19 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "PBKS",
+      "scoreA": {
+        "runs": "254",
+        "wickets": "7",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "200",
+        "wickets": "5",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
