@@ -49,6 +49,18 @@ export function PointsChart({ progression, visibleTeams }) {
   // y-axis ticks
   const yTicks = [];
   for (let v = 0; v <= maxPts; v += 2) yTicks.push(v);
+  
+  // x-axis ticks (match numbers)
+  const xTicks = [];
+  const numMatches = progression.length - 1;
+  const tickInterval = numMatches <= 10 ? 1 : Math.ceil(numMatches / 10);
+  for (let i = 0; i <= numMatches; i += tickInterval) {
+    xTicks.push(i);
+  }
+  if (!xTicks.includes(numMatches)) {
+    xTicks.push(numMatches);
+  }
+  
   return (
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible" }}>
       {/* Grid lines */}
@@ -98,6 +110,28 @@ export function PointsChart({ progression, visibleTeams }) {
             fontWeight="600"
           >
             {lastPts}
+          </text>
+        </g>
+      ))}
+      {/* x-axis ticks and labels */}
+      {xTicks.map((i) => (
+        <g key={`xtick-${i}`}>
+          <line
+            x1={PAD.l + xScale(i)}
+            y1={PAD.t + cH}
+            x2={PAD.l + xScale(i)}
+            y2={PAD.t + cH + 4}
+            stroke="var(--color-border-tertiary)"
+            strokeWidth="0.5"
+          />
+          <text
+            x={PAD.l + xScale(i)}
+            y={PAD.t + cH + 14}
+            textAnchor="middle"
+            fontSize="9"
+            fill="var(--color-text-tertiary)"
+          >
+            {i + 1}
           </text>
         </g>
       ))}

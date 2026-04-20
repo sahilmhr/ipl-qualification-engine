@@ -892,7 +892,20 @@
     "a": "GT",
     "b": "MI",
     "date": "20 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "MI",
+      "scoreA": {
+        "runs": "100",
+        "wickets": "10",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "199",
+        "wickets": "5",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
