@@ -223,7 +223,7 @@ export function FixturesTab({
                     <div
                       style={{
                         fontSize: 11,
-                        color: "#22c55e",
+                        color: filterTeam != "ALL" && filterTeam != teamMap[res.winner].short ? "#ef4444" : "#22c55e",
                         fontWeight: 600,
                       }}
                     >
