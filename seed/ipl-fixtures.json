@@ -923,7 +923,20 @@
     "a": "SRH",
     "b": "DC",
     "date": "21 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "SRH",
+      "scoreA": {
+        "runs": "242",
+        "wickets": "2",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "195",
+        "wickets": "9",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
