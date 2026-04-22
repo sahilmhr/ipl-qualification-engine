@@ -954,7 +954,20 @@
     "a": "LSG",
     "b": "RR",
     "date": "22 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "RR",
+      "scoreA": {
+        "runs": "119",
+        "wickets": "10",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "159",
+        "wickets": "6",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
