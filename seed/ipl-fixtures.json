@@ -985,7 +985,20 @@
     "a": "MI",
     "b": "CSK",
     "date": "23 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "CSK",
+      "scoreA": {
+        "runs": "104",
+        "wickets": "10",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "207",
+        "wickets": "6",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
@@ -1003,7 +1016,20 @@
     "a": "RCB",
     "b": "GT",
     "date": "24 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "RCB",
+      "scoreA": {
+        "runs": "206",
+        "wickets": "5",
+        "overs": "18.5"
+      },
+      "scoreB": {
+        "runs": "205",
+        "wickets": "3",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
