@@ -1047,7 +1047,20 @@
     "a": "DC",
     "b": "PBKS",
     "date": "25 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "PBKS",
+      "scoreA": {
+        "runs": "264",
+        "wickets": "2",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "265",
+        "wickets": "4",
+        "overs": "18.5"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
