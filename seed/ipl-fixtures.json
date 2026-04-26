@@ -1078,7 +1078,20 @@
     "a": "RR",
     "b": "SRH",
     "date": "25 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "SRH",
+      "scoreA": {
+        "runs": "228",
+        "wickets": "6",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "229",
+        "wickets": "5",
+        "overs": "18.3"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
@@ -1096,7 +1109,20 @@
     "a": "CSK",
     "b": "GT",
     "date": "26 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "GT",
+      "scoreA": {
+        "runs": "158",
+        "wickets": "7",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "162",
+        "wickets": "2",
+        "overs": "16.4"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
