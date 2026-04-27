@@ -1171,7 +1171,20 @@
     "a": "DC",
     "b": "RCB",
     "date": "27 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "RCB",
+      "scoreA": {
+        "runs": "75",
+        "wickets": "10",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "77",
+        "wickets": "1",
+        "overs": "6.3"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
