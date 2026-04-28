@@ -102,6 +102,7 @@ export const TABS = [
   "Race",
   "Scenarios",
   "Simulator",
+  "Surpass",
   "H2H",
   "Timelapse",
 ];

@@ -30,6 +30,7 @@ import {
   Race,
   Scenarios,
   Simulator,
+  SurpassAnalyzerTab,
   H2H,
   Timelapse,
   HeaderSection,
@@ -305,6 +306,15 @@ export default function App() {
             rankedTeams={rankedTeams}
             buildBestScenario={buildBestScenario}
             unplayedForSim={unplayedForSim}
+          />
+        )}
+
+        {tab === "Surpass" && (
+          <SurpassAnalyzerTab
+            selectedTeam={selectedTeam}
+            setSelectedTeam={setSelectedTeam}
+            standings={standings}
+            fixtures={fixtures}
           />
         )}
 

@@ -6,5 +6,6 @@ export { default as Scenarios } from "./Scenarios";
 export { default as Simulator } from "./Simulator";
 export { default as H2H } from "./H2H";
 export { default as Timelapse } from "./Timelapse";
+export { SurpassAnalyzerTab } from "./SurpassAnalyzer";
 export { default as HeaderSection } from "./HeaderSection";
 export { default as TabNavigation } from "./TabNavigation";
