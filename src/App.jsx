@@ -32,6 +32,7 @@ import {
   Simulator,
   H2H,
   Timelapse,
+  SurpassAnalyzer,
   HeaderSection,
   TabNavigation,
 } from "./components/features";
@@ -329,6 +330,15 @@ export default function App() {
             tlMatch={tlMatch}
             setTlMatch={setTlMatch}
             maxPlayed={maxPlayed}
+          />
+        )}
+
+        {tab === "Surpass" && (
+          <SurpassAnalyzer
+            selectedTeam={selectedTeam}
+            setSelectedTeam={setSelectedTeam}
+            standings={standings}
+            fixtures={fixtures}
           />
         )}
       </div>

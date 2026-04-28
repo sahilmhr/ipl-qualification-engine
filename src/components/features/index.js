@@ -8,3 +8,4 @@ export { default as H2H } from "./H2H";
 export { default as Timelapse } from "./Timelapse";
 export { default as HeaderSection } from "./HeaderSection";
 export { default as TabNavigation } from "./TabNavigation";
+export { default as SurpassAnalyzer } from "./SurpassAnalyzer";

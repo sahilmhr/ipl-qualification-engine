@@ -104,6 +104,7 @@ export const TABS = [
   "Simulator",
   "H2H",
   "Timelapse",
+  "Surpass",
 ];
 
 // Color constants for UI
