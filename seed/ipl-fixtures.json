@@ -1202,7 +1202,20 @@
     "a": "PBKS",
     "b": "RR",
     "date": "28 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "RR",
+      "scoreA": {
+        "runs": "222",
+        "wickets": "4",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "228",
+        "wickets": "4",
+        "overs": "19.2"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
