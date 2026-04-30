@@ -1264,7 +1264,20 @@
     "a": "GT",
     "b": "RCB",
     "date": "30 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "GT",
+      "scoreA": {
+        "runs": "158",
+        "wickets": "6",
+        "overs": "15.5"
+      },
+      "scoreB": {
+        "runs": "155",
+        "wickets": "10",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
