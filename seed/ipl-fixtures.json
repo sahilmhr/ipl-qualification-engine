@@ -1233,7 +1233,20 @@
     "a": "MI",
     "b": "SRH",
     "date": "29 Apr",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "SRH",
+      "scoreA": {
+        "runs": "243",
+        "wickets": "5",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "249",
+        "wickets": "4",
+        "overs": "18.4"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
