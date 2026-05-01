@@ -1295,7 +1295,20 @@
     "a": "RR",
     "b": "DC",
     "date": "1 May",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "DC",
+      "scoreA": {
+        "runs": "225",
+        "wickets": "6",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "226",
+        "wickets": "3",
+        "overs": "19.1"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
