@@ -1326,7 +1326,20 @@
     "a": "CSK",
     "b": "MI",
     "date": "2 May",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "CSK",
+      "scoreA": {
+        "runs": "160",
+        "wickets": "2",
+        "overs": "18.1"
+      },
+      "scoreB": {
+        "runs": "159",
+        "wickets": "7",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
