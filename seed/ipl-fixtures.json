@@ -1357,7 +1357,20 @@
     "a": "SRH",
     "b": "KKR",
     "date": "3 May",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "KKR",
+      "scoreA": {
+        "runs": "165",
+        "wickets": "10",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "169",
+        "wickets": "3",
+        "overs": "18.2"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
@@ -1375,7 +1388,20 @@
     "a": "GT",
     "b": "PBKS",
     "date": "3 May",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "GT",
+      "scoreA": {
+        "runs": "167",
+        "wickets": "6",
+        "overs": "19.5"
+      },
+      "scoreB": {
+        "runs": "163",
+        "wickets": "9",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
