@@ -1419,7 +1419,20 @@
     "a": "MI",
     "b": "LSG",
     "date": "4 May",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "MI",
+      "scoreA": {
+        "runs": "229",
+        "wickets": "4",
+        "overs": "18.4"
+      },
+      "scoreB": {
+        "runs": "228",
+        "wickets": "5",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
