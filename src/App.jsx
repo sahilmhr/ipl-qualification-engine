@@ -4,6 +4,7 @@ import { buildFixtures } from "./utils/storage";
 import {
   computeStandings,
   computeQualification,
+  computeTop2Qualification,
   findCriticalMatches,
 } from "./utils/math";
 import {
@@ -46,7 +47,9 @@ export default function App() {
   const [tab, setTab] = useState("Standings");
   const [selectedTeam, setSelectedTeam] = useState(DEFAULT_TEAM);
   const [qualResult, setQualResult] = useState(null);
+  const [top2Result, setTop2Result] = useState(null);
   const [computing, setComputing] = useState(false);
+  const [computing2, setComputing2] = useState(false);
   const [matchPage, setMatchPage] = useState(0);
   const [filterTeam, setFilterTeam] = useState("ALL");
   const [modalMatch, setModalMatch] = useState(null);
@@ -125,10 +128,19 @@ export default function App() {
     }, 10);
   };
 
+  const handleComputeTop2 = () => {
+    setComputing2(true);
+    setTimeout(() => {
+      setTop2Result(computeTop2Qualification(selectedTeam, fixtures, standings));
+      setComputing2(false);
+    }, 10);
+  };
+
   const resetAll = () => {
     if (confirm("Reset all results?")) {
       setFixtures(buildFixtures());
       setQualResult(null);
+      setTop2Result(null);
       setScenario({});
     }
   };
@@ -263,13 +275,17 @@ export default function App() {
             standings={standings}
             fixtures={fixtures}
             qualResult={qualResult}
+            top2Result={top2Result}
             computing={computing}
+            computing2={computing2}
             handleCompute={handleCompute}
+            handleComputeTop2={handleComputeTop2}
             rankedTeams={rankedTeams}
             criticalMatches={criticalMatches}
             setModalMatch={setModalMatch}
             fmtNRR={fmtNRR}
             setQualResult={setQualResult}
+            setTop2Result={setTop2Result}
           />
         )}
 

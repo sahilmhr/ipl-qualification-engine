@@ -420,3 +420,93 @@ export function generateQualificationScenarios(teamId, fixtures) {
   );
   return scenarios;
 }
+
+// Check if 2 teams can exceed a threshold (for top 2 qualification)
+export function canTwoTeamsExceed(teamId, threshold, fixtures, standings) {
+  // Fix 1: derive teams from standings, not a global
+  const others = Object.keys(standings).filter((id) => id !== teamId);
+
+  const allRemMatches = fixtures.filter(
+    (f) => !f.result && f.a !== teamId && f.b !== teamId,
+  );
+
+  const needs = {},
+    maxPoss = {};
+  others.forEach((tid) => {
+    const w = standings[tid]?.wins || 0;
+    needs[tid] = Math.max(0, threshold - w);
+    const tr = fixtures.filter(
+      (f) => !f.result && (f.a === tid || f.b === tid),
+    ).length;
+    maxPoss[tid] = w + tr;
+  });
+  const viable = others.filter((tid) => maxPoss[tid] >= threshold);
+  if (viable.length < 2) return false;
+
+  for (const subset of combinations(viable, 2)) {
+    const required = subset.reduce((s, tid) => s + needs[tid], 0);
+    if (required === 0) return true;
+
+    // Fix 2: only include matches relevant to this subset
+    const subsetMatches = allRemMatches.filter(
+      (m) => subset.includes(m.a) || subset.includes(m.b),
+    );
+
+    const M = subsetMatches.length;
+    const SINK = M + subset.length + 1;
+    const NN = SINK + 1;
+    const SRC = 0;
+
+    const tIdx = {};
+    subset.forEach((tid, i) => {
+      tIdx[tid] = M + 1 + i;
+    });
+
+    const cap = Array.from({ length: NN }, () => new Array(NN).fill(0));
+
+    subsetMatches.forEach((m, i) => {
+      cap[SRC][i + 1] = 1;
+      if (tIdx[m.a] !== undefined) cap[i + 1][tIdx[m.a]] = 1;
+      if (tIdx[m.b] !== undefined) cap[i + 1][tIdx[m.b]] = 1;
+    });
+
+    subset.forEach((tid) => {
+      cap[tIdx[tid]][SINK] = needs[tid];
+    });
+    if (maxFlowEK(cap, SRC, SINK, NN) >= required) return true;
+  }
+  return false;
+}
+
+// Compute top 2 qualification for specific team
+export function computeTop2Qualification(teamId, fixtures, standings) {
+  const w = standings[teamId]?.wins || 0;
+  const rem = fixtures.filter(
+    (f) => !f.result && (f.a === teamId || f.b === teamId),
+  ).length;
+  if (!canTwoTeamsExceed(teamId, w + 1, fixtures, standings))
+    return {
+      currentWins: w,
+      remaining: rem,
+      minAdditionalWins: 0,
+      alreadyGuaranteed: true,
+      impossible: false,
+    };
+  for (let k = 1; k <= rem; k++) {
+    if (!canTwoTeamsExceed(teamId, w + k + 1, fixtures, standings))
+      return {
+        currentWins: w,
+        remaining: rem,
+        minAdditionalWins: k,
+        alreadyGuaranteed: false,
+        impossible: false,
+      };
+  }
+  return {
+    currentWins: w,
+    remaining: rem,
+    minAdditionalWins: null,
+    alreadyGuaranteed: false,
+    impossible: true,
+  };
+}

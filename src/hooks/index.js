@@ -4,6 +4,7 @@ import {
   computeStandings,
   computePointsProgression,
   computeQualification,
+  computeTop2Qualification,
 } from "../utils/math";
 import { TEAMS } from "../constants";
 
