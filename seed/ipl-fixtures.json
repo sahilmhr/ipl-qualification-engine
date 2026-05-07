@@ -1481,7 +1481,20 @@
     "a": "SRH",
     "b": "PBKS",
     "date": "6 May",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "SRH",
+      "scoreA": {
+        "runs": "235",
+        "wickets": "4",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "202",
+        "wickets": "7",
+        "overs": "20"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
