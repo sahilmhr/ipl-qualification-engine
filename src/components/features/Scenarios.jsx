@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { TEAMS, COLORS, teamMap } from "../../constants";
 import { generateQualificationScenarios } from "../../utils/math";
 import { fmtNRR } from "../../utils/helpers";
+import { ScenarioModal } from "../shared/ScenarioModal";
 
 const C = COLORS.primary;
 const Y = COLORS.secondary;
@@ -12,6 +13,7 @@ export function ScenariosTab({ selectedTeam, setSelectedTeam, fixtures, rankedTe
   const [scenarios, setScenarios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeScenarios, setActiveScenarios] = useState(new Set());
+  const [modalScenarioIndex, setModalScenarioIndex] = useState(null);
 
   const handleGenerateScenarios = () => {
     setLoading(true);
@@ -35,6 +37,10 @@ export function ScenariosTab({ selectedTeam, setSelectedTeam, fixtures, rankedTe
       newActive.add(index);
     }
     setActiveScenarios(newActive);
+  };
+
+  const openScenarioModal = (index) => {
+    setModalScenarioIndex(index);
   };
 
   const currentRank = rankedTeams.findIndex((t) => t.id === selectedTeam) + 1;
@@ -248,6 +254,25 @@ export function ScenariosTab({ selectedTeam, setSelectedTeam, fixtures, rankedTe
                     >
                       Rank: #{scenario.rank}
                     </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openScenarioModal(idx);
+                      }}
+                      style={{
+                        padding: "4px 10px",
+                        border: "1px solid var(--color-border-secondary)",
+                        borderRadius: 5,
+                        background: `${C}15`,
+                        color: C,
+                        fontSize: 10,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        marginLeft: 8,
+                      }}
+                    >
+                      View Full
+                    </button>
                   </div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                     {matchResults.slice(0, 6).map(([matchId, winner]) => {
@@ -447,6 +472,16 @@ export function ScenariosTab({ selectedTeam, setSelectedTeam, fixtures, rankedTe
             })}
           </div>
         </div>
+      )}
+
+      {/* Scenario Modal */}
+      {modalScenarioIndex !== null && (
+        <ScenarioModal
+          scenario={scenarios[modalScenarioIndex]}
+          scenarioIndex={modalScenarioIndex}
+          selectedTeam={selectedTeam}
+          onClose={() => setModalScenarioIndex(null)}
+        />
       )}
     </div>
   );
