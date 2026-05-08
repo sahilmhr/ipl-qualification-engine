@@ -1543,7 +1543,20 @@
     "a": "DC",
     "b": "KKR",
     "date": "8 May",
-    "result": null,
+    "result": {
+      "type": "win",
+      "winner": "KKR",
+      "scoreA": {
+        "runs": "142",
+        "wickets": "8",
+        "overs": "20"
+      },
+      "scoreB": {
+        "runs": "147",
+        "wickets": "2",
+        "overs": "14.2"
+      }
+    },
     "scoreA": {
       "runs": "",
       "wickets": "",
